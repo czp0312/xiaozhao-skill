@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/xiaozhao-skill/job-record.schema.json",
+  "title": "校招岗位记录",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "company_name",
+    "role_title",
+    "role_family",
+    "recruiting_type",
+    "locations",
+    "apply_url",
+    "source_url",
+    "source_level",
+    "verified_at",
+    "status"
+  ],
+  "properties": {
+    "company_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "company_aliases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "role_title": {
+      "type": "string",
+      "description": "来源页面中的官方岗位名称。",
+      "minLength": 1
+    },
+    "role_family": {
+      "type": "string",
+      "enum": [
+        "frontend",
+        "backend",
+        "client",
+        "fullstack",
+        "ai_app",
+        "llm_app",
+        "algorithm",
+        "machine_learning",
+        "data_engineering",
+        "data_analysis",
+        "test_development",
+        "sre",
+        "security",
+        "game_development",
+        "graphics",
+        "embedded",
+        "hardware_software",
+        "other_technical",
+        "non_technical"
+      ]
+    },
+    "recruiting_type": {
+      "type": "string",
+      "enum": [
+        "campus",
+        "internship",
+        "daily_internship",
+        "summer_internship",
+        "spring_recruitment",
+        "fall_recruitment",
+        "early_batch",
+        "off_cycle",
+        "unknown"
+      ]
+    },
+    "target_graduation": {
+      "type": "string",
+      "default": "not_specified"
+    },
+    "locations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "deadline": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "apply_url": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "source_level": {
+      "type": "string",
+      "enum": [
+        "S",
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    "source_name": {
+      "type": "string",
+      "default": ""
+    },
+    "posted_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "verified_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "job_description": {
+      "type": "string",
+      "default": ""
+    },
+    "requirements": {
+      "type": "string",
+      "default": ""
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "expired",
+        "unknown",
+        "unverified_lead"
+      ]
+    },
+    "confidence_note": {
+      "type": "string",
+      "default": ""
+    }
+  }
+}
