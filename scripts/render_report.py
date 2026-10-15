@@ -112,8 +112,9 @@ def main() -> int:
 
     out_path = Path(args.out) if args.out else data_path.with_suffix(".html")
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(html, encoding="utf-8")
-    print(f"已生成报告：{out_path}（{len(html)} 字节）")
+    # 固定用 \n 写入，避免 Windows 把换行翻译成 \r\n，让文件字节数与跨平台结果一致。
+    out_path.write_text(html, encoding="utf-8", newline="\n")
+    print(f"已生成报告：{out_path}（{out_path.stat().st_size} 字节）")
     return 0
 
 
