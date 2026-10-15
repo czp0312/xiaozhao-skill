@@ -46,11 +46,12 @@ It is useful for:
 
 | Capability | Description |
 | --- | --- |
-| Official portal index | 132 companies with verified official recruiting entry points, grouped by 15 industry segments with a verification date. |
+| Official portal index | 228 companies with verified official recruiting entry points, grouped by 15 industry segments with a verification date. |
 | Current opening research | Organizes active opportunities by company, role, graduation year, city, and recruiting batch. |
 | Source verification | Prioritizes company career sites, campus portals, official recruiting accounts, and official hiring systems. |
 | JD analysis | Extracts responsibilities, hard requirements, nice-to-haves, technical keywords, and likely follow-ups. |
 | Role matching | Ranks applications by year, skills, projects, internships, city constraints, and preparation window. |
+| Role profiles | Summarises hard gates, core skills, bonus items and non-CS transition paths per role family, distilled from real JDs. |
 | Cross-major transition | Direction mapping, skill gaps, and project suggestions for mechanical, automation, vehicle, and electronics backgrounds. |
 | Resume diagnosis | Identifies blockers, major issues, medium-impact issues, and polish items by priority. |
 | Resume rewriting | Improves truth-preserving expression around personal actions, technical solutions, tradeoffs, and results. |
@@ -59,7 +60,9 @@ It is useful for:
 
 ## Official Recruiting Portal Index
 
-`references/company-portals.md` lists official recruiting entry points for 132 companies across internet platforms, AI and LLM companies, computer vision and security, embodied AI and robotics, motion control and industrial automation, autonomous driving and smart vehicles, chips and computing, telecom and ICT, smart hardware and consumer electronics, gaming, enterprise services and cloud, cybersecurity, and fintech.
+`references/role-profiles.md` distils real campus JDs into per-role-family profiles across embodied AI, motion control, CV, LLM, agents, embedded software and hardware, and IC, with transition paths for mechanical, automation and electronics majors.
+
+`references/company-portals.md` lists official recruiting entry points for 228 companies across internet platforms, AI and LLM companies, computer vision and security, embodied AI and robotics, motion control and industrial automation, autonomous driving and smart vehicles, chips and computing, telecom and ICT, smart hardware and consumer electronics, gaming, enterprise services and cloud, cybersecurity, and fintech.
 
 Every link was verified with a real HTTP request: the request succeeded and the landing page title or domain belongs to that company. Entries that redirect to an official ATS (Beisen, Feishu Hire, Moka) are labeled separately.
 

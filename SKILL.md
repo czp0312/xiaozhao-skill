@@ -75,7 +75,7 @@ metadata:
 用于“我适合投什么岗位”“这些公司怎么排序”“我该冲哪些方向”等问题。
 
 1. 收集年级、学历、专业、技能、项目、实习、城市、时间窗口和偏好。
-2. 读取 `references/candidate-strategy.md`。
+2. 读取 `references/candidate-strategy.md` 和 `references/role-profiles.md`。
 3. 用户是机械、自动化、电子等非计算机工科背景时，先做方向映射，再谈岗位排序。
 4. 有结构化候选人与岗位数据时，可运行 `scripts/score_match.py` 做轻量辅助评分。
 5. 评分只用于组织判断，最终必须解释证据；脚本对缺少技能画像的岗位族会明确提示无法评分，此时不得用总分代替判断。
@@ -85,7 +85,7 @@ metadata:
 
 用于用户粘贴 JD 或要求拆解岗位要求。
 
-1. 读取 `references/jd-analysis.md`。
+1. 读取 `references/jd-analysis.md`，需要对照同类岗位常见要求时再读 `references/role-profiles.md`。
 2. 判断岗位族，拆分职责、硬性要求、加分项、关键词和隐含能力。
 3. 隐含能力必须标为推断。
 4. 给出简历突出点、面试追问方向和准备优先级。
@@ -114,6 +114,7 @@ metadata:
 - `references/company-portals.md`：大厂与热门技术公司官方招聘入口索引，按行业分组并标注核验日期。
 - `references/source-system.md`：信息源分级、时效性核验、岗位字段、去重规则。
 - `references/candidate-strategy.md`：候选人画像、岗位匹配、工科转技术岗方向映射、投递排序和 7 天行动计划。
+- `references/role-profiles.md`：岗位族能力画像，按族汇总真实 JD 归纳出的硬门槛、必备技能、加分项和工科转岗切入点。
 - `references/jd-analysis.md`：JD 拆解、岗位族判断、关键词和面试追问推断。
 - `references/resume.md`：简历诊断、真实性约束、项目经历改写方法。
 - `references/interview.md`：技术面、HR 面、项目追问和模拟面试流程。
