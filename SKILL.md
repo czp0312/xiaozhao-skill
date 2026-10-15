@@ -18,7 +18,8 @@ metadata:
 - 明确区分 `事实`、`推断`、`建议`，对不确定信息标注来源状态。
 - 简历改写必须保持真实性；缺失数据用 `[真实指标]`、`[请确认]` 等占位，不擅自补充。
 - 入口索引中的链接带核验日期；跨过一个招聘季后必须重新验证再引用。
-- 招聘官网多为前端渲染：状态码 200 不代表能读到岗位正文。用 `scripts/fetch_jd.py` 判定，判定为 `SHELL` 的页面不得作为 JD 事实来源；`PARKED` 说明入口已失效。
+- 招聘官网多为前端渲染：状态码 200 不代表能读到岗位正文。`scripts/fetch_jd.py` 会先静态请求，判定为 `SHELL` 时自动用无头浏览器（`scripts/_browser.py`）渲染同一地址再取正文；只有两条路径都读不到时才换来源。
+- 渲染后的文本若是岗位列表页，不能直接当成某一条 JD 的原文；需再进入岗位详情页取正文。
 - 抓不到 JD 正文时按 `references/troubleshooting.md` 换来源（高校就业网优先），不得用记忆补全岗位要求。
 
 ## 适用范围
@@ -44,7 +45,7 @@ metadata:
 1. 读取 `references/company-portals.md`，按公司名或行业分组定位官方入口。
 2. 索引中的链接是公司官方招聘站或官方 ATS 页面；命中后直接给出该链接，不要用聚合平台的同名页面替代。
 3. 索引未覆盖、或索引中的入口打不开时，按 `references/source-system.md` 的搜索顺序补查，并把可用新入口反馈给用户。
-4. 需要批量复核入口有效性时，运行 `scripts/check_portals.py`；`SHELL` 只代表页面由前端渲染，不代表入口失效。
+4. 需要批量复核入口有效性时，运行 `scripts/check_portals.py`；`SHELL` 只代表静态请求读不到，不代表入口失效，加 `--render` 会用无头浏览器复核并把能读到正文的升级为 `OK`。
 5. 补充或修正入口时用 `scripts/update_portals.py` 合并，它会重算「覆盖情况」并做防误删校验，不要手工整篇改写索引。
 
 ### 当前岗位检索
@@ -56,7 +57,7 @@ metadata:
 3. 先查官方或近官方来源，再用聚合平台补线索。
 4. 对聚合平台线索回到官方来源复核；无法复核时单独标为 `未核验线索`。
 5. 结构化记录时使用 `scripts/normalize_jobs.py` 统一字段、地点、链接、来源状态并去重。
-6. 抓取 JD 正文用 `scripts/fetch_jd.py`；命中 `SHELL` 时改用高校就业网等可静态读取的来源。
+6. 抓取 JD 正文用 `scripts/fetch_jd.py`；它遇到 `SHELL` 会自动用无头浏览器渲染取正文，仍失败才改用高校就业网等来源。
 7. 输出 verified table，不把已过期或无法投递的岗位混入主表。
 
 默认表头：
@@ -138,8 +139,9 @@ metadata:
 - `scripts/normalize_jobs.py`：岗位记录标准化、去重和 Markdown 表格生成。
 - `scripts/score_match.py`：候选人与岗位的轻量匹配评分。
 - `scripts/extract_resume_text.py`：从 `.txt`、`.md`、`.docx` 简历中提取纯文本。
-- `scripts/check_portals.py`：批量复核招聘入口索引，区分可用、前端渲染、域名停放、反爬和网络失败。
-- `scripts/fetch_jd.py`：抓取岗位 / 招聘页正文，并明确区分“页面打不开”和“读不到正文”。
+- `scripts/check_portals.py`：批量复核招聘入口索引，区分可用、前端渲染、域名停放、反爬和网络失败；`--render` 可把前端渲染入口升级为可用。
+- `scripts/fetch_jd.py`：抓取岗位 / 招聘页正文；静态读不到时自动用无头浏览器渲染，把“读不到正文”变成“读得到”。
+- `scripts/_browser.py`：无头浏览器渲染，专门解决飞书 / 北森 / Moka 等前端渲染招聘页读不到正文的问题。
 - `scripts/update_portals.py`：把新核验的入口安全合并进入口索引，写入前做防误删校验。
 - `scripts/_common.py`：脚本共用工具（UTF-8 输出、HTTP 抓取、页面内容判定）。
 - `scripts/render_report.py`：把岗位调研数据渲染成自包含的 HTML 可视化报告。

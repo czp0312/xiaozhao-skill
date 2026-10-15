@@ -12,6 +12,23 @@ def test_chinese_parked_marker_is_detected():
     assert _common.is_parked("", "该域名可出售") is True
 
 
+def test_godaddy_forsale_page_is_parked_not_ok():
+    # 域名过期后被挂到 GoDaddy 待售，WAF 返回 200 + 一段 Access Denied 文案。
+    text = ("Access Denied You don't have permission to access "
+            "\"http://forsale.godaddy.com/forsale/www.example.com?\" on this server.")
+    assert _common.classify(200, "https://www.example.com/", "Access Denied", text) == "PARKED"
+
+
+def test_waf_access_denied_page_is_blocked_not_ok():
+    text = "Access Denied You don't have permission to access this resource. Reference #18.abc"
+    assert _common.classify(200, "https://example.com/", "Access Denied", text) == "BLOCKED"
+
+
+def test_cloudflare_challenge_is_blocked():
+    assert _common.classify(200, "https://example.com/", "Just a moment...",
+                            "Just a moment... enabling JavaScript") == "BLOCKED"
+
+
 def test_thin_page_is_shell():
     html = '<title>某公司招聘官网</title><div id="app"></div>'
     assert _common.classify(200, "https://x.zhiye.com/campus", _common.page_title(html), _common.visible_text(html)) == "SHELL"

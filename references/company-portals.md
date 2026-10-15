@@ -110,7 +110,6 @@
 | 梅卡曼德 | https://www.mech-mind.com.cn/ | 官方招聘/校招入口 |
 | 越疆科技 | https://www.dobot.cn/ | 官方招聘/校招入口 |
 | 珞石机器人 | https://www.rokae.com/ | 官方招聘/校招入口 |
-| 维他动力 | https://www.vitadynamics.com/ | 官方招聘/校招入口 |
 | 微创机器人 | https://www.medbotsurgical.com/ | 官方招聘/校招入口 |
 | 天智航 | https://www.tinavi.com/ | 官方招聘/校招入口 |
 | 柏惠维康 | https://www.remebot.com.cn/ | 官方招聘/校招入口 |
@@ -180,7 +179,6 @@
 | 阳光电源 | https://www.sungrowpower.com/ | 官方招聘/校招入口 |
 | 三花智控 | https://www.sanhuagroup.com/ | 官方招聘/校招入口 |
 | 拓普集团 | https://www.tuopu.com/ | 官方招聘/校招入口 |
-| 华域汽车 | https://www.hasco.com/ | 官方招聘/校招入口 |
 | 福耀玻璃 | https://www.fuyaogroup.com/ | 官方招聘/校招入口 |
 
 ### 芯片与算力
@@ -332,11 +330,13 @@
 | 圣邦微电子 | https://www.sg-micro.com/ | 本机网络持续超时、https 返回 502，需在国内网络环境人工确认 |
 | 它石智航 | https://www.tarsai.com/ | 站点返回 403 反爬拦截，需人工确认 |
 | 松延动力 | https://www.noetix.com.cn/ | TLS/连接异常，需在国内网络环境人工确认 |
+| 华域汽车 | https://www.hasco.com.cn/ | `hasco.com` 是德国 HASCO（模具标准件），并非华域汽车；正确域名本机不可达，需人工确认 |
+| 维他动力 | https://www.vitadynamics.com/ | 域名已挂到 GoDaddy 待售（`PARKED`），原入口失效，需确认新官网 |
 
 ## 覆盖情况
 
-- 已核验入口：227 家公司。
-- 待人工确认：14 家。
+- 已核验入口：225 家公司。
+- 待人工确认：16 家。
 - 高仙机器人（`gaussian-robotics.com`）落地地址是一张第三方托管商的 404 占位图（`NONHTML`），域名疑似已停用，未收录入口。
 - 精锋医疗（`edgemedical.com`）已是域名停放页（`PARKED`），未收录入口。
 - 未收录的公司，按 `references/source-system.md` 的搜索顺序现场检索，命中官方入口后可补充进本文件。

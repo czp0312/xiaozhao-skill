@@ -6,10 +6,12 @@
     python scripts/check_portals.py --json
     python scripts/check_portals.py --strict
     python scripts/check_portals.py --update-date
+    python scripts/check_portals.py --render
 
 判定标准（状态码 200 不再等于可用）：
     OK      页面可访问且能读到正文；
-    SHELL   页面可访问，但只有前端外壳（ATS 常见），需用浏览器打开确认岗位；
+    SHELL   页面可访问，但静态请求只有前端外壳（ATS 常见）；加 --render 会用无头浏览器复核，
+            能读到正文的会升级为 OK；
     PARKED  命中域名停放 / 出售文案，入口已失效；
     NONHTML 落地地址不是网页（图片 / 文件），通常是域名过期被托管商接管；
     BLOCKED 401/403/405/429/468，反爬或权限拦截；
@@ -17,6 +19,7 @@
     NETERR  网络不可达、TLS 失败或超时。
 
 SHELL 默认不算失败（ATS 由前端渲染是正常现象），加 --strict 才会计入失败。
+--render 会逐个用无头浏览器渲染 SHELL 入口，能读到正文的升级为 OK（慢，按需使用）。
 「待人工确认」分区本来就不保证可用，始终不计入失败。
 存在失败入口时返回非零退出码，可直接用于 CI 或定期巡检。
 """
@@ -31,6 +34,7 @@ from datetime import date
 from pathlib import Path
 
 import _common
+import _browser
 
 DEFAULT_FILE = Path(__file__).resolve().parent.parent / "references" / "company-portals.md"
 ROW_RE = re.compile(r"^\|\s*(?P<company>[^|]+?)\s*\|\s*(?P<url>https?://\S+?)\s*\|\s*(?P<note>[^|]*?)\s*\|\s*$")
@@ -97,6 +101,39 @@ def update_verified_date(path: Path) -> None:
         print(f"已更新核验日期为 {today}")
 
 
+def upgrade_shells(results: list[dict], wait_ms: int | None, limit: int) -> tuple[int, str]:
+    """对 SHELL 入口用无头浏览器复核，能读到正文的升级为 OK。
+
+    返回（升级数量, 不可用原因）。浏览器不可用时返回 0 与原因，不影响主流程。
+    """
+    targets = [
+        r for r in results
+        if r["verdict"] == "SHELL" and PENDING_SECTION not in r["section"]
+    ]
+    if limit:
+        targets = targets[:limit]
+    if not targets:
+        return 0, ""
+
+    upgraded = 0
+    try:
+        with _browser.Renderer() as renderer:
+            for result in targets:
+                try:
+                    rendered = renderer.render(result["url"], wait_ms=wait_ms)
+                except Exception:
+                    continue
+                if rendered["verdict"] == "OK" and len(rendered["text"]) >= _common.THIN_TEXT_LIMIT:
+                    result["verdict"] = "OK"
+                    result["rendered"] = True
+                    if rendered["title"]:
+                        result["title"] = rendered["title"]
+                    upgraded += 1
+    except _browser.BrowserUnavailable as exc:
+        return 0, str(exc)
+    return upgraded, ""
+
+
 def main() -> int:
     _common.configure_utf8_stdio()
     parser = argparse.ArgumentParser(description="复核官方招聘入口索引")
@@ -107,6 +144,10 @@ def main() -> int:
     parser.add_argument("--strict", action="store_true", help="把 SHELL 也视为失败")
     parser.add_argument("--retries", type=int, default=2, help="网络抖动 / 5xx 的重试次数，默认 2")
     parser.add_argument("--update-date", action="store_true", help="核验后把索引顶部日期更新为今天")
+    parser.add_argument("--render", action="store_true",
+                        help="对 SHELL 入口用无头浏览器复核，能读到正文的升级为 OK（较慢）")
+    parser.add_argument("--render-limit", type=int, default=0, help="最多渲染多少个 SHELL 入口，0 表示不限")
+    parser.add_argument("--wait-ms", type=int, default=None, help="渲染后额外等待毫秒数")
     args = parser.parse_args()
 
     path = Path(args.file)
@@ -119,6 +160,14 @@ def main() -> int:
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
         results = list(pool.map(lambda entry: check(entry, args.timeout, args.retries), entries))
+
+    render_note = ""
+    if args.render:
+        upgraded, reason = upgrade_shells(results, args.wait_ms, args.render_limit)
+        if reason:
+            render_note = f"未执行浏览器复核：{reason}"
+        else:
+            render_note = f"浏览器复核已把 {upgraded} 个 SHELL 入口升级为 OK。"
 
     # SHELL 默认只是提示：ATS 由前端渲染属正常现象。--strict 时才计入失败。
     ignored = set() if args.strict else {"SHELL"}
@@ -148,10 +197,12 @@ def main() -> int:
             print(f'[{result["verdict"]:<8}] {result["company"]:<14} {result["url"]}{flag}{moved}')
         usable = len(results) - len(failed)
         print(f'\n共 {len(results)} 个入口，可用 {usable} 个，异常 {len(failed)} 个。')
+        if render_note:
+            print(render_note)
         if shells:
             print(
                 f'另有 {len(shells)} 个前端渲染入口（SHELL）：状态码正常、页面可打开，'
-                '但静态请求读不到岗位正文，需用浏览器打开确认。'
+                '但静态请求读不到岗位正文；可加 --render 用无头浏览器复核。'
             )
 
     if pending:

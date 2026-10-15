@@ -42,6 +42,22 @@ PARKED_MARKERS = (
     "sedoparking",
     "resources and information",
     "godaddy.com/domainsearch",
+    "forsale.godaddy.com",
+    "godaddy.com/forsale",
+    "该域名待售",
+    "inquire about this domain",
+)
+
+# 反爬 / WAF 拦截页的典型文案。这类页面状态码常是 200，正文还挺长，
+# 只看长度会误判成可用。命中即判定为被拦截。
+BLOCKED_MARKERS = (
+    "access denied",
+    "you don't have permission to access",
+    "attention required!",
+    "just a moment",
+    "403 forbidden",
+    "request blocked",
+    "the request could not be satisfied",
 )
 
 # 这些 ATS 域名由前端渲染，静态请求拿不到岗位正文，只能拿到外壳。
@@ -131,6 +147,15 @@ def is_parked(title: str, text: str) -> bool:
     return any(marker.lower() in blob for marker in PARKED_MARKERS)
 
 
+def is_blocked_page(title: str, text: str) -> bool:
+    """判断是不是反爬 / WAF 拦截页。
+
+    拦截页经常返回 200 且正文有几百字，长度判断拦不住，必须看文案。
+    """
+    blob = f"{title} {text}".lower()
+    return any(marker.lower() in blob for marker in BLOCKED_MARKERS)
+
+
 def is_non_html(content_type: str, final_url: str) -> bool:
     """判断落地地址是不是网页。
 
@@ -161,6 +186,8 @@ def classify(
         return "NONHTML"
     if is_parked(title, text):
         return "PARKED"
+    if is_blocked_page(title, text):
+        return "BLOCKED"
     host = final_url.split("//")[-1].split("/")[0].lower()
     thin = len(text) < THIN_TEXT_LIMIT
     if thin and (any(h in host for h in JS_SHELL_HOSTS) or len(title) < 40):

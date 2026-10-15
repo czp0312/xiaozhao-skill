@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import check_portals as cp
+import _browser
 
 
 SAMPLE = """
@@ -80,3 +81,73 @@ def test_check_does_not_retry_ok(monkeypatch):
     monkeypatch.setattr(cp._common, "fetch", fake_fetch)
     cp.check({"section": "s", "company": "c", "url": "https://a.com/", "note": "n"}, 5.0, retries=2)
     assert len(calls) == 1
+
+
+def _row(company, verdict, section="互联网与平台"):
+    return {"section": section, "company": company, "url": f"https://{company}.com/",
+            "note": "n", "status": 200, "final_url": f"https://{company}.com/",
+            "title": "", "verdict": verdict, "error": "", "host_changed": False, "attempts": 1}
+
+
+def test_upgrade_shells_promotes_renderable_entries(monkeypatch):
+    class _FakeRenderer:
+        def __init__(self, *a, **k):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def render(self, url, wait_ms=None):
+            if "bad" in url:
+                return {"status": 200, "final_url": url, "title": "", "text": "",
+                        "content_type": "text/html", "verdict": "SHELL", "error": "", "rendered": True}
+            return {"status": 200, "final_url": url, "title": "渲染标题", "text": "岗位职责 " * 80,
+                    "content_type": "text/html", "verdict": "OK", "error": "", "rendered": True}
+
+    monkeypatch.setattr(cp._browser, "Renderer", _FakeRenderer)
+    rows = [_row("good", "SHELL"), _row("bad", "SHELL"), _row("static", "OK")]
+
+    upgraded, reason = cp.upgrade_shells(rows, None, 0)
+
+    assert (upgraded, reason) == (1, "")
+    assert rows[0]["verdict"] == "OK" and rows[0]["rendered"] is True
+    assert rows[1]["verdict"] == "SHELL"
+    assert rows[2]["verdict"] == "OK"  # 静态 OK 不受影响
+
+
+def test_upgrade_shells_skips_pending_section(monkeypatch):
+    class _FakeRenderer:
+        def __init__(self, *a, **k):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def render(self, url, wait_ms=None):
+            raise AssertionError("待人工确认分区不应被渲染")
+
+    monkeypatch.setattr(cp._browser, "Renderer", _FakeRenderer)
+    rows = [_row("pending", "SHELL", section="待人工确认")]
+
+    assert cp.upgrade_shells(rows, None, 0) == (0, "")
+
+
+def test_upgrade_shells_degrades_without_browser(monkeypatch):
+    class _Boom:
+        def __init__(self, *a, **k):
+            raise _browser.BrowserUnavailable("未安装 playwright")
+
+    monkeypatch.setattr(cp._browser, "Renderer", _Boom)
+    rows = [_row("good", "SHELL")]
+
+    upgraded, reason = cp.upgrade_shells(rows, None, 0)
+
+    assert upgraded == 0
+    assert "playwright" in reason
+    assert rows[0]["verdict"] == "SHELL"

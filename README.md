@@ -64,13 +64,18 @@ English documentation: [README.en.md](README.en.md)
 
 `references/company-portals.md` 收录 228 家公司的官方招聘入口，覆盖互联网大厂、AI 与大模型公司、计算机视觉与安防、具身智能与机器人、运控与工业自动化、自动驾驶与智能汽车、芯片与算力、通信与 ICT、智能硬件与消费电子、游戏、企业服务与云、网络安全、金融科技等方向。
 
-索引中的每条链接都用真实 HTTP 请求核验过，核验标准不止“状态码 200”：会进一步判断页面能否读到正文、是否命中域名停放页。
-招聘官网大量使用前端渲染，这类入口标记为 `SHELL`（可用，但静态请求读不到岗位正文）；域名停放页标记为 `PARKED`（入口已失效）。
+索引中的每条链接都用真实 HTTP 请求核验过，核验标准不止“状态码 200”：会进一步判断页面能否读到正文、是否命中域名停放页或跳转到占位图。
+招聘官网大量使用前端渲染，这类入口标记为 `SHELL`（静态请求读不到岗位正文）；域名停放页标记为 `PARKED`、跳转到图片或文件标记为 `NONHTML`（入口已失效）。
+
+`SHELL` 不等于没救：加 `--render` 会用无头浏览器渲染这些入口，能读到正文的升级为 `OK`。
 
 入口会失效，所以索引本身也带时效：跨过一个招聘季后需要重新核验。批量复核用：
 
 ```bash
 python scripts/check_portals.py
+
+# 用无头浏览器复核前端渲染入口，能读到正文的升级为 OK
+python scripts/check_portals.py --render
 ```
 
 ## 适用场景
@@ -152,7 +157,8 @@ xiaozhao-skill/
 ├── scripts/
 │   ├── _common.py                脚本共用工具：UTF-8 输出、抓取、页面判定
 │   ├── check_portals.py          批量复核招聘入口（可用/前端渲染/停放/反爬）
-│   ├── fetch_jd.py               抓取岗位正文，区分“打不开”和“读不到正文”
+│   ├── fetch_jd.py               抓取岗位正文，静态读不到时自动用无头浏览器渲染
+│   ├── _browser.py               无头浏览器渲染，解决前端渲染招聘页读不到正文
 │   ├── update_portals.py         安全合并新入口，写入前做防误删校验
 │   ├── render_report.py          把调研数据渲染成 HTML 可视化报告
 │   ├── normalize_jobs.py         岗位记录标准化、去重、生成表格
@@ -163,7 +169,14 @@ xiaozhao-skill/
 
 ## 脚本与测试
 
-脚本只依赖 Python 标准库，不需要安装任何第三方包。
+脚本默认只依赖 Python 标准库。读取前端渲染的招聘页（飞书招聘 / 北森 / Moka）需要可选的 Playwright：
+
+```bash
+pip install playwright
+python -m playwright install chromium
+```
+
+没装时相关脚本会降级为静态抓取并给出提示，其余功能不受影响。
 
 ```bash
 # 岗位记录标准化 + 去重 + 生成 Markdown 表格
@@ -175,9 +188,11 @@ python scripts/normalize_jobs.py jobs.json --json
 # 复核招聘入口索引（SHELL 不算失败，加 --strict 才计入）
 python scripts/check_portals.py
 python scripts/check_portals.py --json
+python scripts/check_portals.py --render
 
-# 抓取岗位 / 招聘页正文，判定是否可读
+# 抓取岗位 / 招聘页正文；静态读不到时自动用无头浏览器渲染
 python scripts/fetch_jd.py https://career.nankai.edu.cn/correcruit/content/id/116497.html
+python scripts/fetch_jd.py https://unitree.zhiye.com/campus --render
 
 # 安全合并新核验的入口（先 dry-run）
 python scripts/update_portals.py --input entries.json --dry-run
