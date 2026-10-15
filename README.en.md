@@ -64,7 +64,7 @@ It is useful for:
 
 `references/company-portals.md` lists official recruiting entry points for 228 companies across internet platforms, AI and LLM companies, computer vision and security, embodied AI and robotics, motion control and industrial automation, autonomous driving and smart vehicles, chips and computing, telecom and ICT, smart hardware and consumer electronics, gaming, enterprise services and cloud, cybersecurity, and fintech.
 
-Every link was verified with a real HTTP request: the request succeeded and the landing page title or domain belongs to that company. Entries that redirect to an official ATS (Beisen, Feishu Hire, Moka) are labeled separately.
+Every link was verified with a real HTTP request, and the bar is higher than "status 200": the checker also tests whether the page yields readable content and whether it is a parked domain. Many recruiting sites are JS-rendered; those are marked `SHELL` (usable, but no static JD text). Parked domains are marked `PARKED` (dead entry).
 
 Portals expire, so the index carries its own freshness date and should be re-verified after each recruiting season. Batch re-check:
 
@@ -126,6 +126,7 @@ After installation, call the Skill with natural language:
 | JD analysis | Breaks down requirements, hard constraints, nice-to-haves, and inferred capabilities. |
 | Resume module | Supports resume diagnosis, project rewriting, truthfulness constraints, and engineering-background translation. |
 | Interview module | Supports technical interviews, HR interviews, project follow-ups, and mock interviews. |
+| Retrieval troubleshooting | Documents verdicts and protocols for JS-rendered portals, parked domains, anti-bot blocks, and encoding pitfalls. |
 | Output templates | Keeps job tables, analysis conclusions, review feedback, and action plans consistent. |
 
 ## Repository Layout
@@ -141,10 +142,15 @@ xiaozhao-skill/
 │   ├── jd-analysis.md            JD breakdown and role family judgement
 │   ├── resume.md                 Resume diagnosis, rewriting, background translation
 │   ├── interview.md              Technical, HR, project follow-ups, mock interviews
+│   ├── role-profiles.md          Per-role-family profiles: hard gates, skills, transition paths
+│   ├── troubleshooting.md        JS-rendered portals, parked domains, static-readable sources
 │   ├── output-formats.md         Reusable output templates
 │   └── job-record.schema.json    Job record JSON Schema
 ├── scripts/
-│   ├── check_portals.py          Batch re-check recruiting portal availability
+│   ├── _common.py                Shared helpers: UTF-8 output, fetching, page verdicts
+│   ├── check_portals.py          Batch re-check portals (ok / shell / parked / blocked)
+│   ├── fetch_jd.py               Fetch JD text, separating "cannot open" from "cannot read"
+│   ├── update_portals.py         Safely merge new portals with an anti-truncation guard
 │   ├── normalize_jobs.py         Normalize, dedupe, and render job records
 │   ├── score_match.py            Lightweight candidate-to-role scoring
 │   └── extract_resume_text.py    Extract text from .txt/.md/.docx resumes
@@ -162,8 +168,15 @@ python scripts/normalize_jobs.py jobs.json
 # Emit normalized JSON instead
 python scripts/normalize_jobs.py jobs.json --json
 
-# Re-check the recruiting portal index
+# Re-check the recruiting portal index (SHELL is not a failure unless --strict)
 python scripts/check_portals.py
+python scripts/check_portals.py --json
+
+# Fetch JD text and report whether the page is statically readable
+python scripts/fetch_jd.py https://career.nankai.edu.cn/correcruit/content/id/116497.html
+
+# Safely merge newly verified portals (dry-run first)
+python scripts/update_portals.py --input entries.json --dry-run
 
 # Score a candidate against a role
 python scripts/score_match.py match.json

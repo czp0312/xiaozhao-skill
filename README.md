@@ -64,7 +64,8 @@ English documentation: [README.en.md](README.en.md)
 
 `references/company-portals.md` 收录 228 家公司的官方招聘入口，覆盖互联网大厂、AI 与大模型公司、计算机视觉与安防、具身智能与机器人、运控与工业自动化、自动驾驶与智能汽车、芯片与算力、通信与 ICT、智能硬件与消费电子、游戏、企业服务与云、网络安全、金融科技等方向。
 
-索引中的每条链接都用真实 HTTP 请求核验过：请求成功，且落地页标题或域名归属该公司。跳转到官方 ATS（北森、飞书招聘、Moka）的入口会单独标注。
+索引中的每条链接都用真实 HTTP 请求核验过，核验标准不止“状态码 200”：会进一步判断页面能否读到正文、是否命中域名停放页。
+招聘官网大量使用前端渲染，这类入口标记为 `SHELL`（可用，但静态请求读不到岗位正文）；域名停放页标记为 `PARKED`（入口已失效）。
 
 入口会失效，所以索引本身也带时效：跨过一个招聘季后需要重新核验。批量复核用：
 
@@ -126,6 +127,7 @@ python scripts/check_portals.py
 | JD 分析 | 拆解岗位要求，提取硬性条件、加分项和隐含能力。 |
 | 简历模块 | 支持简历诊断、项目经历改写和真实性约束。 |
 | 面试模块 | 支持技术面、HR 面、项目追问和模拟面试。 |
+| 检索排障 | 记录入口抓取、前端渲染、反爬和编码类问题的判定口径与处理协议。 |
 | 输出模板 | 保持岗位表、分析结论、复盘建议和行动计划的结构一致。 |
 
 ## 目录结构
@@ -141,10 +143,15 @@ xiaozhao-skill/
 │   ├── jd-analysis.md            JD 拆解与岗位族判断
 │   ├── resume.md                 简历诊断、改写与工科背景转译
 │   ├── interview.md              技术面、HR 面、项目追问、模拟面试
+│   ├── role-profiles.md          岗位族能力画像（硬门槛、技能、转岗切入点）
+│   ├── troubleshooting.md        检索排障：前端渲染、停放页、可静态读取的来源
 │   ├── output-formats.md         可复用输出模板
 │   └── job-record.schema.json    岗位记录 JSON Schema
 ├── scripts/
-│   ├── check_portals.py          批量复核招聘入口是否可用
+│   ├── _common.py                脚本共用工具：UTF-8 输出、抓取、页面判定
+│   ├── check_portals.py          批量复核招聘入口（可用/前端渲染/停放/反爬）
+│   ├── fetch_jd.py               抓取岗位正文，区分“打不开”和“读不到正文”
+│   ├── update_portals.py         安全合并新入口，写入前做防误删校验
 │   ├── normalize_jobs.py         岗位记录标准化、去重、生成表格
 │   ├── score_match.py            候选人与岗位的轻量匹配评分
 │   └── extract_resume_text.py    从 .txt/.md/.docx 简历提取文本
@@ -162,8 +169,15 @@ python scripts/normalize_jobs.py jobs.json
 # 输出标准化 JSON
 python scripts/normalize_jobs.py jobs.json --json
 
-# 复核招聘入口索引
+# 复核招聘入口索引（SHELL 不算失败，加 --strict 才计入）
 python scripts/check_portals.py
+python scripts/check_portals.py --json
+
+# 抓取岗位 / 招聘页正文，判定是否可读
+python scripts/fetch_jd.py https://career.nankai.edu.cn/correcruit/content/id/116497.html
+
+# 安全合并新核验的入口（先 dry-run）
+python scripts/update_portals.py --input entries.json --dry-run
 
 # 岗位匹配评分
 python scripts/score_match.py match.json

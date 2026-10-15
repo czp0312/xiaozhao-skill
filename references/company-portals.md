@@ -207,7 +207,6 @@
 | 芯原微电子 | https://www.verisilicon.com/ | 官方招聘/校招入口 |
 | 翱捷科技 | https://www.asrmicro.com/ | 官方招聘/校招入口 |
 | 思瑞浦 | https://www.3peak.com/ | 官方招聘/校招入口 |
-| 圣邦微电子 | http://www.sg-micro.com/ | 官方招聘/校招入口 |
 | 峰岹科技 | https://www.fortiortech.com/ | 官方招聘/校招入口 |
 | 士兰微 | https://www.silan.com.cn/ | 官方招聘/校招入口 |
 | 华润微电子 | https://www.crmicro.com/ | 官方招聘/校招入口 |
@@ -216,7 +215,7 @@
 | 华虹半导体 | https://www.huahonggrace.com/ | 官方招聘/校招入口 |
 | 长江存储 | https://www.ymtc.com/ | 官方招聘/校招入口 |
 | 华大九天 | https://www.empyrean.com.cn/ | 官方招聘/校招入口 |
-| 兆芯 | http://www.zhaoxin.com/ | 官方招聘/校招入口 |
+| 兆芯 | https://www.zhaoxin.com/ | 官方招聘/校招入口 |
 | 江波龙 | https://www.longsys.com/ | 官方招聘/校招入口 |
 
 ### 通信与 ICT
@@ -330,12 +329,13 @@
 | 均胜电子 | https://www.joyson.cn/ | TLS 握手失败，需在国内网络环境人工确认 |
 | 极飞科技 | https://www.xag.cn/ | TLS 握手失败，需在国内网络环境人工确认 |
 | 术锐机器人 | https://www.shurui.com/ | 返回 404，需确认正确官网入口 |
+| 圣邦微电子 | https://www.sg-micro.com/ | 本机网络持续超时、https 返回 502，需在国内网络环境人工确认 |
 | 它石智航 | https://www.tarsai.com/ | 站点返回 403 反爬拦截，需人工确认 |
 | 松延动力 | https://www.noetix.com.cn/ | TLS/连接异常，需在国内网络环境人工确认 |
 
 ## 覆盖情况
 
-- 已核验入口：228 家公司。
-- 待人工确认：13 家。
+- 已核验入口：227 家公司。
+- 待人工确认：14 家。
 - 高仙机器人（`gaussian-robotics.com`）解析到无效页面，疑似域名已停用，未收录入口。
 - 未收录的公司，按 `references/source-system.md` 的搜索顺序现场检索，命中官方入口后可补充进本文件。
