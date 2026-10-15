@@ -18,8 +18,8 @@
 
 确认公司归属后可作为最终依据：
 
-- Moka 企业招聘页；
-- 北森 / Hotjob 企业招聘页；
+- `references/company-portals.md` 中已核验的入口；
+- 北森（`zhiye.com`）、飞书招聘（`jobs.feishu.cn`）、Moka（`mokahr.com`）、Hotjob 等官方 ATS 企业招聘页；
 - 猎聘、智联等官方校招项目页；
 - 公司自有 `career`、`jobs`、`campus`、`talent` 域名。
 
@@ -45,6 +45,29 @@
 - 旧招聘季文章；
 - 付费群、引流帖、营销漏斗。
 
+## 检索顺序
+
+1. 查 `references/company-portals.md`，命中已核验入口就直接使用。
+2. 未收录或入口失效时，查公司招聘官网。
+3. 查公司校园招聘或实习招聘页。
+4. 查官方招聘账号和官方公告。
+5. 查官方 ATS 页面。
+6. 用搜索引擎定向查询。
+7. 查聚合平台和社区线索。
+8. 回到官方或近官方来源复核。
+
+常用查询：
+
+```text
+公司名 校招 官网
+公司名 实习生招聘 官网
+公司名 2026 校招 技术岗
+公司名 2027 实习 前端
+公司名 AI 应用开发 实习
+site:app.mokahr.com/campus-recruitment 公司名 前端 实习
+site:hotjob.cn 公司名 校招
+```
+
 ## 时效性核验
 
 遇到以下问题必须核验时效：
@@ -61,6 +84,8 @@
 - `expired`：截止时间已过、页面显示关闭、岗位下线或投递按钮不可用。
 - `unknown`：当前官方页面存在，但未公开截止时间或状态。
 - `unverified_lead`：只有线索来源，或官方来源无法访问。
+
+入口索引本身也带时效：`references/company-portals.md` 顶部记录核验日期，跨过一个招聘季后需要重新核验。
 
 ## 岗位记录字段
 
@@ -90,6 +115,8 @@ confidence_note
 
 ## 岗位族
 
+具体方向优先于通用方向，例如“大模型算法工程师”归 `llm_app`，“嵌入式软件工程师”归 `embedded_software`。
+
 ```text
 frontend
 backend
@@ -97,8 +124,15 @@ client
 fullstack
 ai_app
 llm_app
+agent_development
 algorithm
 machine_learning
+computer_vision
+embodied_ai
+motion_control
+embedded_software
+embedded_hardware
+ic_design
 data_engineering
 data_analysis
 test_development
@@ -106,11 +140,11 @@ sre
 security
 game_development
 graphics
-embedded
-hardware_software
 other_technical
 non_technical
 ```
+
+岗位族判定时，先看岗位标题，再看 JD 正文；正文提到某个技术不等于岗位属于该方向。
 
 ## 招聘类型
 
@@ -126,33 +160,11 @@ off_cycle
 unknown
 ```
 
-## 搜索顺序
-
-1. 公司招聘官网。
-2. 公司校园招聘或实习招聘页。
-3. 官方招聘账号和官方公告。
-4. 官方 ATS 页面。
-5. 搜索引擎定向查询。
-6. 聚合平台和社区线索。
-7. 回到官方或近官方来源复核。
-
-常用查询：
-
-```text
-公司名 校招 官网
-公司名 实习生招聘 官网
-公司名 2026 校招 技术岗
-公司名 2027 实习 前端
-公司名 AI 应用开发 实习
-site:app.mokahr.com/campus-recruitment 公司名 前端 实习
-site:hotjob.cn 公司名 校招
-```
-
 ## 去重规则
 
-比较前先标准化：
+`scripts/normalize_jobs.py` 已实现去重，比较前先标准化：
 
-- 移除 `utm_*`、`spm`、`from`、`source`、`token` 等链接追踪参数；
+- 移除 `utm_*`、`spm`、`from`、`source`、`token`、`share`、`ref` 等链接追踪参数；
 - 统一公司别名；
 - 将城市分隔符统一为 `、`；
 - 按岗位族比较，不只看岗位标题原文；
@@ -169,6 +181,8 @@ site:hotjob.cn 公司名 校招
 - 不同招聘批次；
 - 不同岗位族；
 - 同公司同岗位但明确为不同城市的独立岗位。
+
+需要保留原始记录时，用 `--no-dedup` 跳过脚本去重。
 
 ## 来源状态标签
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local.codex/xiaozhao-skill/job-record.schema.json",
+  "$id": "https://github.com/czp0312/xiaozhao-skill/references/job-record.schema.json",
   "title": "校招岗位记录",
   "type": "object",
   "additionalProperties": false,
@@ -35,6 +35,7 @@
     },
     "role_family": {
       "type": "string",
+      "description": "岗位族。具体方向优先于通用方向，例如大模型算法归 llm_app，嵌入式软件归 embedded_software。",
       "enum": [
         "frontend",
         "backend",
@@ -42,8 +43,15 @@
         "fullstack",
         "ai_app",
         "llm_app",
+        "agent_development",
         "algorithm",
         "machine_learning",
+        "computer_vision",
+        "embodied_ai",
+        "motion_control",
+        "embedded_software",
+        "embedded_hardware",
+        "ic_design",
         "data_engineering",
         "data_analysis",
         "test_development",
@@ -51,8 +59,6 @@
         "security",
         "game_development",
         "graphics",
-        "embedded",
-        "hardware_software",
         "other_technical",
         "non_technical"
       ]

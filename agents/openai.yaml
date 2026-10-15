@@ -2,7 +2,7 @@ interface:
   display_name: '校招.skill'
   short_description: '软件开发岗校招、实习、简历与面试助手'
   brand_color: '#2563EB'
-  default_prompt: '使用 $校招.skill 帮我分析目标岗位、优化简历，并制定校招或实习投递策略。'
+  default_prompt: '使用 $xiaozhao-skill 帮我查官方招聘入口、分析目标岗位、优化简历，并制定校招或实习投递策略。'
 
 policy:
   allow_implicit_invocation: true
