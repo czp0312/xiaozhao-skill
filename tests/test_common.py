@@ -17,6 +17,28 @@ def test_thin_page_is_shell():
     assert _common.classify(200, "https://x.zhiye.com/campus", _common.page_title(html), _common.visible_text(html)) == "SHELL"
 
 
+def test_expired_domain_redirecting_to_image_is_not_ok():
+    # 域名过期后被托管商接管，200 但落到一张 404 图片，正文其实是二进制垃圾。
+    garbage = "\ufffd" * 4000
+    assert _common.classify(
+        200, "https://ayuda.crea-tuweb.es/404-graphic_es.png", "", garbage, "image/png"
+    ) == "NONHTML"
+
+
+def test_binary_final_url_is_detected_without_content_type():
+    assert _common.classify(200, "https://example.com/404.pdf", "", "") == "NONHTML"
+    # 没有二进制扩展名时仍走原有逻辑（空页面判为 SHELL），不会误判成 NONHTML。
+    assert _common.classify(200, "https://example.com/", "", "") == "SHELL"
+
+
+def test_html_content_type_is_still_evaluated_normally():
+    body = "岗位职责与任职要求 " * 60
+    html = f"<title>某公司校园招聘</title><div>{body}</div>"
+    assert _common.classify(
+        200, "https://example.com/job", _common.page_title(html), _common.visible_text(html), "text/html; charset=utf-8"
+    ) == "OK"
+
+
 def test_content_rich_page_is_ok():
     body = "岗位职责与任职要求 " * 60
     html = f"<title>某公司校园招聘 - 具身智能算法工程师</title><div>{body}</div>"

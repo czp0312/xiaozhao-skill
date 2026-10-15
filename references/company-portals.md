@@ -337,5 +337,6 @@
 
 - 已核验入口：227 家公司。
 - 待人工确认：14 家。
-- 高仙机器人（`gaussian-robotics.com`）解析到无效页面，疑似域名已停用，未收录入口。
+- 高仙机器人（`gaussian-robotics.com`）落地地址是一张第三方托管商的 404 占位图（`NONHTML`），域名疑似已停用，未收录入口。
+- 精锋医疗（`edgemedical.com`）已是域名停放页（`PARKED`），未收录入口。
 - 未收录的公司，按 `references/source-system.md` 的搜索顺序现场检索，命中官方入口后可补充进本文件。

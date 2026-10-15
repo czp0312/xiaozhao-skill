@@ -6,7 +6,8 @@
 1. Windows 控制台默认不是 UTF-8，直接 print 中文会乱码或被截断；
 2. 招聘官网大量使用前端渲染，静态请求只能拿到外壳，状态码 200 不代表能读到岗位内容；
 3. 部分失效域名会跳转到域名停放页，状态码同样是 200；
-4. 部分站点必须带 Cookie 才能完成 302 跳转。
+4. 域名彻底过期后会被托管商接管，跳转到一张 404 图片，状态码依然是 200；
+5. 部分站点必须带 Cookie 才能完成 302 跳转。
 """
 
 from __future__ import annotations
@@ -16,6 +17,7 @@ import re
 import ssl
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 
 USER_AGENT = (
@@ -58,7 +60,24 @@ JS_SHELL_HOSTS = (
 # 可见文本少于该长度时，判定为“只有外壳，没有正文”。
 THIN_TEXT_LIMIT = 200
 
-VERDICT_ORDER = ("PARKED", "NETERR", "BLOCKED", "HTTP", "SHELL", "OK")
+# 落地地址不是网页时的响应类型前缀。域名过期后常被托管商接管，
+# 跳转到一张 404 图片，状态码依然是 200。
+NON_HTML_TYPES = (
+    "image/",
+    "video/",
+    "audio/",
+    "font/",
+    "application/pdf",
+    "application/zip",
+    "application/octet-stream",
+    "application/x-msdownload",
+)
+BINARY_EXT_RE = re.compile(
+    r"\.(png|jpe?g|gif|webp|svg|ico|bmp|pdf|zip|rar|7z|gz|tar|exe|dmg|mp4|mp3|wav|woff2?|ttf)$",
+    re.I,
+)
+
+VERDICT_ORDER = ("PARKED", "NONHTML", "NETERR", "BLOCKED", "HTTP", "SHELL", "OK")
 
 
 def configure_utf8_stdio() -> None:
@@ -112,14 +131,34 @@ def is_parked(title: str, text: str) -> bool:
     return any(marker.lower() in blob for marker in PARKED_MARKERS)
 
 
-def classify(status: int | None, final_url: str, title: str, text: str) -> str:
-    """把一次请求归类为 OK / SHELL / PARKED / BLOCKED / HTTPxxx / NETERR。"""
+def is_non_html(content_type: str, final_url: str) -> bool:
+    """判断落地地址是不是网页。
+
+    入口过期后被托管商接管、跳转到图片或文件的情况，状态码同样是 200，
+    但静态请求拿到的是一堆二进制字节，绝不能当成可用入口。
+    """
+    ctype = (content_type or "").split(";")[0].strip().lower()
+    if ctype:
+        if ctype.startswith("text/") or ctype in ("application/xhtml+xml", "application/xml"):
+            return False
+        if any(ctype.startswith(prefix) or ctype == prefix for prefix in NON_HTML_TYPES):
+            return True
+    path = urllib.parse.urlsplit(final_url).path
+    return bool(BINARY_EXT_RE.search(path))
+
+
+def classify(
+    status: int | None, final_url: str, title: str, text: str, content_type: str = ""
+) -> str:
+    """把一次请求归类为 OK / SHELL / PARKED / NONHTML / BLOCKED / HTTPxxx / NETERR。"""
     if status is None:
         return "NETERR"
     if status in (401, 403, 405, 429, 468):
         return "BLOCKED"
     if status != 200:
         return f"HTTP{status}"
+    if is_non_html(content_type, final_url):
+        return "NONHTML"
     if is_parked(title, text):
         return "PARKED"
     host = final_url.split("//")[-1].split("/")[0].lower()
@@ -135,6 +174,7 @@ def fetch(url: str, timeout: float = 20.0, max_bytes: int = 2_000_000) -> dict:
     try:
         with opener.open(urllib.request.Request(url), timeout=timeout) as response:
             raw = response.read(max_bytes)
+            content_type = response.headers.get("Content-Type", "")
             charset = response.headers.get_content_charset() or "utf-8"
             try:
                 html = raw.decode(charset, "ignore")
@@ -147,17 +187,20 @@ def fetch(url: str, timeout: float = 20.0, max_bytes: int = 2_000_000) -> dict:
                 "final_url": response.geturl(),
                 "title": title,
                 "text": text,
-                "verdict": classify(response.status, response.geturl(), title, text),
+                "content_type": content_type,
+                "verdict": classify(response.status, response.geturl(), title, text, content_type),
                 "error": "",
             }
     except urllib.error.HTTPError as exc:
         final = getattr(exc, "url", url)
+        content_type = exc.headers.get("Content-Type", "") if exc.headers else ""
         return {
             "status": exc.code,
             "final_url": final,
             "title": "",
             "text": "",
-            "verdict": classify(exc.code, final, "", ""),
+            "content_type": content_type,
+            "verdict": classify(exc.code, final, "", "", content_type),
             "error": "",
         }
     except Exception as exc:  # 网络不可达、TLS 失败、超时等
@@ -166,6 +209,7 @@ def fetch(url: str, timeout: float = 20.0, max_bytes: int = 2_000_000) -> dict:
             "final_url": url,
             "title": "",
             "text": "",
+            "content_type": "",
             "verdict": "NETERR",
             "error": f"{type(exc).__name__}: {exc}",
         }
