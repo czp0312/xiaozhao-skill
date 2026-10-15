@@ -46,7 +46,7 @@ It is useful for:
 
 | Capability | Description |
 | --- | --- |
-| Official portal index | 120 companies with verified official recruiting entry points, grouped by 15 industry segments with a verification date. |
+| Official portal index | 132 companies with verified official recruiting entry points, grouped by 15 industry segments with a verification date. |
 | Current opening research | Organizes active opportunities by company, role, graduation year, city, and recruiting batch. |
 | Source verification | Prioritizes company career sites, campus portals, official recruiting accounts, and official hiring systems. |
 | JD analysis | Extracts responsibilities, hard requirements, nice-to-haves, technical keywords, and likely follow-ups. |
@@ -59,7 +59,7 @@ It is useful for:
 
 ## Official Recruiting Portal Index
 
-`references/company-portals.md` lists official recruiting entry points for 120 companies across internet platforms, AI and LLM companies, computer vision and security, embodied AI and robotics, motion control and industrial automation, autonomous driving and smart vehicles, chips and computing, telecom and ICT, smart hardware and consumer electronics, gaming, enterprise services and cloud, cybersecurity, and fintech.
+`references/company-portals.md` lists official recruiting entry points for 132 companies across internet platforms, AI and LLM companies, computer vision and security, embodied AI and robotics, motion control and industrial automation, autonomous driving and smart vehicles, chips and computing, telecom and ICT, smart hardware and consumer electronics, gaming, enterprise services and cloud, cybersecurity, and fintech.
 
 Every link was verified with a real HTTP request: the request succeeded and the landing page title or domain belongs to that company. Entries that redirect to an official ATS (Beisen, Feishu Hire, Moka) are labeled separately.
 

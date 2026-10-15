@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
+import http.cookiejar
 import json
 import re
 import ssl
@@ -66,16 +67,19 @@ def fetch(url: str, timeout: float) -> dict[str, object]:
     context = ssl.create_default_context()
     context.check_hostname = False
     context.verify_mode = ssl.CERT_NONE
-    request = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": UA,
-            "Accept": "text/html,application/xhtml+xml,*/*;q=0.8",
-            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-        },
+    # 部分招聘站依赖 Cookie 才能完成跳转，没有 Cookie 容器会停在 302。
+    opener = urllib.request.build_opener(
+        urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()),
+        urllib.request.HTTPSHandler(context=context),
     )
+    opener.addheaders = [
+        ("User-Agent", UA),
+        ("Accept", "text/html,application/xhtml+xml,*/*;q=0.8"),
+        ("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8"),
+    ]
+    request = urllib.request.Request(url)
     try:
-        with urllib.request.urlopen(request, timeout=timeout, context=context) as response:
+        with opener.open(request, timeout=timeout) as response:
             return {"status": response.status, "final_url": response.geturl(), "error": ""}
     except urllib.error.HTTPError as exc:
         return {"status": exc.code, "final_url": getattr(exc, "url", url), "error": ""}

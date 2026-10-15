@@ -19,13 +19,17 @@
 | Shopee | https://careers.shopee.cn/ | 官方招聘/校招入口 |
 | 京东 | https://campus.jd.com/ | 官方招聘/校招入口 |
 | 哔哩哔哩 | https://jobs.bilibili.com/campus | 官方招聘/校招入口 |
+| 唯品会 | https://campus.vip.com/ | 官方 ATS 招聘页 |
 | 字节跳动 | https://jobs.bytedance.com/campus | 官方招聘/校招入口 |
 | 小红书 | https://job.xiaohongshu.com/campus | 官方招聘/校招入口 |
 | 得物 | https://careers.dewu.com/ | 官方招聘/校招入口 |
 | 快手 | https://zhaopin.kuaishou.cn/ | 官方招聘/校招入口 |
+| 拼多多 | https://careers.pddglobalhr.com/campus | 官方 ATS 招聘页 |
 | 携程 | https://careers.ctrip.com/#/campus | 官方招聘/校招入口 |
 | 淘天集团 | https://talent.taotian.com/ | 官方招聘/校招入口 |
+| 滴滴 | https://campus.didiglobal.com/ | 官方招聘/校招入口 |
 | 百度 | https://talent.baidu.com/jobs/campus | 官方招聘/校招入口 |
+| 知乎 | https://app.mokahr.com/apply/zhihu/78336 | 官方 ATS 招聘页 |
 | 网易 | https://hr.163.com/campus.html | 官方招聘/校招入口 |
 | 美团 | https://zhaopin.meituan.com/web/campus | 官方招聘/校招入口 |
 | 腾讯 | https://join.qq.com/ | 官方招聘/校招入口 |
@@ -38,6 +42,7 @@
 | 公司 | 官方招聘入口 | 说明 |
 | --- | --- | --- |
 | DeepSeek | https://www.deepseek.com/ | 官方招聘/校招入口 |
+| MiniMax | https://www.minimax.cn/ | 官方招聘/校招入口 |
 | 云知声 | https://www.unisound.com/ | 官方招聘/校招入口 |
 | 出门问问 | https://www.mobvoi.com/ | 官方招聘/校招入口 |
 | 思必驰 | https://www.aispeech.com/ | 官方招聘/校招入口 |
@@ -79,6 +84,7 @@
 | 宇树科技 | https://www.unitree.com/cn/ | 官方招聘/校招入口 |
 | 擎朗智能 | https://www.keenon.com/en | 官方招聘/校招入口 |
 | 普渡机器人 | https://www.pudutech.com/zh-CN | 官方招聘/校招入口 |
+| 智元机器人 | https://www.agibot.com.cn/ | 官方招聘/校招入口 |
 | 极智嘉 | https://www.geekplus.com/en | 官方招聘/校招入口 |
 | 海柔创新 | https://www.hairobotics.com/ | 官方招聘/校招入口 |
 | 逐际动力 | https://www.limxdynamics.com/zh | 官方招聘/校招入口 |
@@ -88,6 +94,7 @@
 
 | 公司 | 官方招聘入口 | 说明 |
 | --- | --- | --- |
+| 埃斯顿 | https://www.estun.com/ | 官方招聘/校招入口 |
 | 大族激光 | https://www.hanslaser.com/ | 官方招聘/校招入口 |
 | 新时达 | https://www.stepelectric.com/ | 官方招聘/校招入口 |
 | 汇川技术 | https://www.inovance.com/ | 官方招聘/校招入口 |
@@ -100,8 +107,10 @@
 | --- | --- | --- |
 | Momenta | https://www.momenta.cn/ | 官方招聘/校招入口 |
 | 中科创达 | https://www.thundersoft.com/ | 官方招聘/校招入口 |
+| 吉利汽车 | https://campus.geely.com/campus-recruitment/geely/78436/ | 官方 ATS 招聘页 |
 | 地平线 | https://horizonrobotics.jobs.feishu.cn/ | 官方 ATS 招聘页 |
 | 小马智行 | https://www.pony.ai/ | 官方招聘/校招入口 |
+| 小鹏汽车 | https://xiaopeng.jobs.feishu.cn/ | 官方 ATS 招聘页 |
 | 德赛西威 | https://www.desaysv.com/ | 官方招聘/校招入口 |
 | 文远知行 | https://www.weride.ai/zh | 官方招聘/校招入口 |
 | 比亚迪 | https://job.byd.com/ | 官方招聘/校招入口 |
@@ -178,12 +187,14 @@
 | --- | --- | --- |
 | 深信服 | https://hr.sangfor.com/ | 官方招聘/校招入口 |
 | 用友网络 | https://www.yonyou.com/ | 官方招聘/校招入口 |
+| 金山办公 | https://join.wps.cn/ | 官方 ATS 招聘页 |
 | 金蝶软件 | https://www.kingdee.com/cn | 官方招聘/校招入口 |
 
 ### 网络安全
 
 | 公司 | 官方招聘入口 | 说明 |
 | --- | --- | --- |
+| 360集团 | https://360campus.zhiye.com/ | 官方 ATS 招聘页 |
 | 天融信 | https://www.topsec.com.cn/ | 官方招聘/校招入口 |
 | 奇安信 | https://www.qianxin.com/ | 官方招聘/校招入口 |
 | 安恒信息 | https://www.dbappsecurity.com.cn/ | 官方招聘/校招入口 |
@@ -205,6 +216,7 @@
 | 公司 | 官方招聘入口 | 说明 |
 | --- | --- | --- |
 | 作业帮 | https://www.zybang.com/ | 官方招聘/校招入口 |
+| 好未来 | https://www.tal.com/zh-cn | 官方招聘/校招入口 |
 | 猿辅导 | https://www.yuanfudao.com/ | 官方招聘/校招入口 |
 
 ### 待人工确认
@@ -213,12 +225,11 @@
 | --- | --- | --- |
 | 微博 | https://careers.weibo.com/ | 域名存在但本机网络无法建立连接，需在国内网络环境人工确认 |
 | 达闼机器人 | https://www.cloudminds.com/ | 域名存在但本机网络无法建立连接，需人工确认 |
-| 埃斯顿 | https://www.estun.com/ | 返回 302 且未成功落地，需人工确认招聘栏目 |
 | 启明星辰 | https://www.venustech.com.cn/ | 站点在线但返回 403，反爬拦截，需人工确认招聘栏目 |
 
 ## 覆盖情况
 
-- 已核验入口：120 家公司。
-- 待人工确认：4 家。
+- 已核验入口：132 家公司。
+- 待人工确认：3 家。
 - 高仙机器人（`gaussian-robotics.com`）解析到无效页面，疑似域名已停用，未收录入口。
 - 未收录的公司，按 `references/source-system.md` 的搜索顺序现场检索，命中官方入口后可补充进本文件。
