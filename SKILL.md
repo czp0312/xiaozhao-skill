@@ -113,6 +113,15 @@ metadata:
 3. 生成重点准备内容和项目追问链路。
 4. 模拟面试一次只问一个问题，并根据用户回答继续追问。
 
+### 报告输出
+
+用于“把结果做成 HTML / 图表 / 可视化报告”等需求。
+
+1. 先按前面的模块把事实、推断、建议整理清楚，再决定可视化。
+2. 把结论整理成报告 JSON（结构见 `scripts/render_report.py` 的文档字符串）。
+3. 运行 `scripts/render_report.py` 渲染成自包含 HTML；它不依赖第三方库，也不依赖联网。
+4. 图表数据必须来自已核验结果，不要为了图表好看而编造数字。
+
 ## 模块索引
 
 - `references/company-portals.md`：大厂与热门技术公司官方招聘入口索引，按行业分组并标注核验日期。
@@ -125,6 +134,7 @@ metadata:
 - `references/output-formats.md`：可复用输出模板。
 - `references/troubleshooting.md`：检索与抓取的常见问题、可静态读取的 JD 来源、入口核验流程和结论书写纪律。
 - `references/job-record.schema.json`：岗位记录 JSON Schema。
+- `references/report-template.html`：HTML 调研报告模板，含图表、卡片、时间线与响应式样式。
 - `scripts/normalize_jobs.py`：岗位记录标准化、去重和 Markdown 表格生成。
 - `scripts/score_match.py`：候选人与岗位的轻量匹配评分。
 - `scripts/extract_resume_text.py`：从 `.txt`、`.md`、`.docx` 简历中提取纯文本。
@@ -132,5 +142,6 @@ metadata:
 - `scripts/fetch_jd.py`：抓取岗位 / 招聘页正文，并明确区分“页面打不开”和“读不到正文”。
 - `scripts/update_portals.py`：把新核验的入口安全合并进入口索引，写入前做防误删校验。
 - `scripts/_common.py`：脚本共用工具（UTF-8 输出、HTTP 抓取、页面内容判定）。
+- `scripts/render_report.py`：把岗位调研数据渲染成自包含的 HTML 可视化报告。
 
 只加载当前任务需要的模块，避免一次性读取全部参考资料。

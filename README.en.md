@@ -127,6 +127,7 @@ After installation, call the Skill with natural language:
 | Resume module | Supports resume diagnosis, project rewriting, truthfulness constraints, and engineering-background translation. |
 | Interview module | Supports technical interviews, HR interviews, project follow-ups, and mock interviews. |
 | Retrieval troubleshooting | Documents verdicts and protocols for JS-rendered portals, parked domains, anti-bot blocks, and encoding pitfalls. |
+| HTML report | Renders research findings into a self-contained HTML report with charts, cards, and timelines. |
 | Output templates | Keeps job tables, analysis conclusions, review feedback, and action plans consistent. |
 
 ## Repository Layout
@@ -144,6 +145,7 @@ xiaozhao-skill/
 │   ├── interview.md              Technical, HR, project follow-ups, mock interviews
 │   ├── role-profiles.md          Per-role-family profiles: hard gates, skills, transition paths
 │   ├── troubleshooting.md        JS-rendered portals, parked domains, static-readable sources
+│   ├── report-template.html      HTML report template (charts / cards / timelines)
 │   ├── output-formats.md         Reusable output templates
 │   └── job-record.schema.json    Job record JSON Schema
 ├── scripts/
@@ -151,6 +153,7 @@ xiaozhao-skill/
 │   ├── check_portals.py          Batch re-check portals (ok / shell / parked / blocked)
 │   ├── fetch_jd.py               Fetch JD text, separating "cannot open" from "cannot read"
 │   ├── update_portals.py         Safely merge new portals with an anti-truncation guard
+│   ├── render_report.py          Render research data into an HTML report
 │   ├── normalize_jobs.py         Normalize, dedupe, and render job records
 │   ├── score_match.py            Lightweight candidate-to-role scoring
 │   └── extract_resume_text.py    Extract text from .txt/.md/.docx resumes
@@ -177,6 +180,9 @@ python scripts/fetch_jd.py https://career.nankai.edu.cn/correcruit/content/id/11
 
 # Safely merge newly verified portals (dry-run first)
 python scripts/update_portals.py --input entries.json --dry-run
+
+# Render research data into an HTML report
+python scripts/render_report.py report.json --out report.html
 
 # Score a candidate against a role
 python scripts/score_match.py match.json

@@ -129,6 +129,7 @@ python scripts/check_portals.py
 | 面试模块 | 支持技术面、HR 面、项目追问和模拟面试。 |
 | 检索排障 | 记录入口抓取、前端渲染、反爬和编码类问题的判定口径与处理协议。 |
 | 输出模板 | 保持岗位表、分析结论、复盘建议和行动计划的结构一致。 |
+| HTML 报告 | 把调研结论渲染成带图表、卡片和时间线的自包含 HTML 报告。 |
 
 ## 目录结构
 
@@ -145,6 +146,7 @@ xiaozhao-skill/
 │   ├── interview.md              技术面、HR 面、项目追问、模拟面试
 │   ├── role-profiles.md          岗位族能力画像（硬门槛、技能、转岗切入点）
 │   ├── troubleshooting.md        检索排障：前端渲染、停放页、可静态读取的来源
+│   ├── report-template.html      HTML 报告模板（图表 / 卡片 / 时间线）
 │   ├── output-formats.md         可复用输出模板
 │   └── job-record.schema.json    岗位记录 JSON Schema
 ├── scripts/
@@ -152,6 +154,7 @@ xiaozhao-skill/
 │   ├── check_portals.py          批量复核招聘入口（可用/前端渲染/停放/反爬）
 │   ├── fetch_jd.py               抓取岗位正文，区分“打不开”和“读不到正文”
 │   ├── update_portals.py         安全合并新入口，写入前做防误删校验
+│   ├── render_report.py          把调研数据渲染成 HTML 可视化报告
 │   ├── normalize_jobs.py         岗位记录标准化、去重、生成表格
 │   ├── score_match.py            候选人与岗位的轻量匹配评分
 │   └── extract_resume_text.py    从 .txt/.md/.docx 简历提取文本
@@ -178,6 +181,9 @@ python scripts/fetch_jd.py https://career.nankai.edu.cn/correcruit/content/id/11
 
 # 安全合并新核验的入口（先 dry-run）
 python scripts/update_portals.py --input entries.json --dry-run
+
+# 把调研数据渲染成 HTML 报告
+python scripts/render_report.py report.json --out report.html
 
 # 岗位匹配评分
 python scripts/score_match.py match.json
