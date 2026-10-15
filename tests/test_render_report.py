@@ -51,3 +51,47 @@ def test_render_requires_placeholder():
     import pytest
     with pytest.raises(SystemExit):
         rr.render({"title": "t", "sections": []}, "<html></html>")
+
+
+def test_scan_internal_flags_skill_run_status():
+    payload = {
+        "title": "岗位调研",
+        "sections": [{"title": "本次调研暴露并已修复的问题",
+                      "blocks": [{"type": "fixes", "items": [{"title": "修复前 x"}]}]}],
+    }
+    hits = rr.scan_internal(payload)
+    assert "修复前" in hits
+
+
+def test_scan_internal_flags_verdict_names_and_scripts():
+    payload = {"title": "报告", "sections": [
+        {"title": "入口核验", "sub": "68 个入口判定为 SHELL", "blocks": []},
+        {"title": "脚本", "sub": "见 scripts/check_portals.py", "blocks": []},
+    ]}
+    hits = rr.scan_internal(payload)
+    assert "SHELL" in hits
+    assert "入口核验" in hits
+    assert "scripts/" in hits
+
+
+def test_scan_internal_passes_for_pure_job_report():
+    payload = {
+        "pageTitle": "具身智能岗位调研",
+        "title": "具身智能岗位到底要什么",
+        "lede": "基于真实校招 JD。",
+        "chips": ["JD 正文样本 <b>7</b> 份"],
+        "kpis": [{"value": 5, "suffix": "/7", "label": "JD 提到 VLA / 多模态大模型"}],
+        "sections": [
+            {"title": "岗位技能要求频次", "sub": "按有多少份 JD 提到计数",
+             "blocks": [{"type": "bars", "rows": [{"label": "Python", "value": 4}]}]},
+            {"title": "学历与专业门槛", "blocks": [{"type": "table", "rows": [["a", "b"]]}]},
+        ],
+    }
+    assert rr.scan_internal(payload) == []
+
+
+def test_lowercase_shell_in_jd_text_is_not_flagged():
+    # JD 里出现 shell 脚本是正常岗位要求，不应被当成入口判定结论。
+    payload = {"title": "岗位调研", "sections": [
+        {"title": "技能要求", "sub": "熟悉 shell 脚本与 Linux 环境", "blocks": []}]}
+    assert rr.scan_internal(payload) == []

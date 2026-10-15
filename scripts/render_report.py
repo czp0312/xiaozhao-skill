@@ -24,6 +24,13 @@
 可用 block 类型：prose / bars / donut / table / skillcards / matrix /
 transfer / timeline / fixes / legend / cards / columns。
 
+报告内容契约（重要）：
+HTML 报告只呈现**找到的岗位相关情况**——岗位、公司、技能要求、学历门槛、
+投递入口、流程与来源。**不要**把 skill 自身的运行情况写进报告：脚本报错、
+入口判定结果、抓取失败、修复记录、测试数量等一律不进报告。
+这些内容属于 agent 与用户之间的对话，应由 agent 在后台汇总后单独告知用户。
+校验默认会拦截此类内容；确需生成 skill 变更记录时用 --allow-internal。
+
 模板是 references/report-template.html，其中的 __PAYLOAD__ 会被替换成数据。
 报告不依赖任何第三方库，也不需要联网（字体加载失败时会回退到系统字体）。
 """
@@ -44,6 +51,33 @@ BLOCK_TYPES = {
     "prose", "bars", "donut", "table", "skillcards", "matrix",
     "transfer", "timeline", "fixes", "legend", "cards", "columns",
 }
+
+# skill 内部信息特征。报告只讲岗位，这些词一旦出现就说明混进了运行情况。
+SKILL_INTERNAL_MARKERS = (
+    "xiaozhao-skill", "scripts/",
+    "_common.py", "_browser.py", "render_report", "check_portals",
+    "fetch_jd", "update_portals", "normalize_jobs", "score_match", "extract_resume_text",
+    "回归测试", "测试用例", "pytest",
+    "修复前", "修复后", "已修复",
+    "判定口径", "入口核验", "状态码",
+    "无头浏览器", "无头渲染",
+)
+# 入口判定结论属于运行情况，且大小写敏感（避免误伤 JD 里的 shell 脚本等词）。
+SKILL_INTERNAL_VERDICTS = ("SHELL", "PARKED", "NONHTML", "BLOCKED", "NETERR")
+
+
+def scan_internal(payload: dict) -> list[str]:
+    """扫描报告数据里是否混入了 skill 自身的运行情况。"""
+    blob = json.dumps(payload, ensure_ascii=False)
+    plain = re.sub(r"<[^>]+>", "", blob).lower()
+    hits: list[str] = []
+    for marker in SKILL_INTERNAL_MARKERS:
+        if marker.lower() in plain:
+            hits.append(marker)
+    for verdict in SKILL_INTERNAL_VERDICTS:
+        if verdict in blob:
+            hits.append(verdict)
+    return sorted(set(hits))
 
 
 def validate(payload: dict) -> list[str]:
@@ -88,6 +122,8 @@ def main() -> int:
     parser.add_argument("--template", default=str(DEFAULT_TEMPLATE), help="HTML 模板路径")
     parser.add_argument("--out", help="输出 HTML 路径，默认与输入同名的 .html")
     parser.add_argument("--check", action="store_true", help="只校验数据，不写文件")
+    parser.add_argument("--allow-internal", action="store_true",
+                        help="允许报告包含 skill 运行情况（仅用于生成 skill 变更记录，不用于岗位报告）")
     args = parser.parse_args()
 
     data_path = Path(args.input)
@@ -96,6 +132,15 @@ def main() -> int:
     payload = json.loads(data_path.read_text(encoding="utf-8"))
 
     problems = validate(payload)
+    if not args.allow_internal:
+        internal = scan_internal(payload)
+        if internal:
+            problems.append(
+                "报告里混入了 skill 自身的运行情况："
+                + "、".join(internal)
+                + "。岗位报告只呈现岗位相关情况；这些内容请在对话里单独告知用户。"
+                + "确需生成 skill 变更记录时加 --allow-internal。"
+            )
     if problems:
         print("报告数据校验未通过：")
         for problem in problems:
